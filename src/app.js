@@ -17,6 +17,13 @@ app.use(cors({
 
 app.use("/api/exercises", exercisesRouter);
 
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "¡API de Ejercicios funcionando impecable en Vercel!",
+        docs: "/api/exercises"
+    });
+});
+
 app.get("/api/health", (req, res) => {
     res.status(200).json({
         status: "ok",
