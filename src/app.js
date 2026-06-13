@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config(); //Para cargar las variables .env}
+const exercisesRouter = require("./routes/exercises.routes");
+
 
 const app = express();
 
@@ -12,6 +14,8 @@ app.use(cors({
     methods: ["PUT", "GET", "DELETE", "POST"],
     allowedHeaders: ["Content-Type" , "Authorization"]
 }));
+
+app.use("/api/exercises", exercisesRouter);
 
 app.get("/api/health", (req, res) => {
     res.status(200).json({
