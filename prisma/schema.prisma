@@ -12,13 +12,23 @@ datasource db {
 
 model Exercise {
   id Int @id @default(autoincrement())
+  difficulty String
+  video String
+  image String
+  targetIntensity String
+  @@map("exercise")
+  translations ExerciseTranslation []
+}
+
+model ExerciseTranslation {
+  id Int @id @default(autoincrement())
+  language String
   name String
   muscleGroup String
   equipment String
-  difficulty String
-  video String
   breathing String
-  image String
   technique String
-  targetIntensity String
+  @@map("exerciseTranslation")
+  exerciseId Int
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
 }
