@@ -1,7 +1,24 @@
 const prisma = require('../config/prisma');
 
-async function findAll() {
-  return prisma.exercise.findMany();
+// Modificado para soportar paginación real en la tabla base
+async function findAll(limit = 10, page = 1) {
+  const skip = (page - 1) * limit;
+  return prisma.exercise.findMany({
+    take: limit,
+    skip: skip,
+  });
+}
+
+// NUEVO SERVICIO: Busca en exerciseTranslation según el idioma y pagina
+async function findByLanguage(lang, limit = 10, page = 1) {
+  const skip = (page - 1) * limit;
+  return prisma.exerciseTranslation.findMany({
+    where: {
+      language: lang // Filtra por "en" o "es" según la URL
+    },
+    take: limit,
+    skip: skip
+  });
 }
 
 async function findById(id) {
@@ -49,17 +66,16 @@ async function update(id, data) {
 }
 
 async function remove(id) {
-  const exerciseId = Number(id);
-
   return prisma.exercise.delete({
-    where: { id: exerciseId }
+    where: { id: Number(id) }
   });
 }
 
 module.exports = {
   findAll,
+  findByLanguage, // Exportamos el nuevo servicio
   findById,
   create,
   update,
-  remove,
+  remove
 };
