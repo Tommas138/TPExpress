@@ -18,6 +18,7 @@ model Exercise {
   targetIntensity String
   @@map("exercise")
   translations ExerciseTranslation []
+  favorite Favorites []
 }
 
 model ExerciseTranslation {
@@ -31,4 +32,23 @@ model ExerciseTranslation {
   @@map("exerciseTranslation")
   exerciseId Int
   exercise Exercise @relation(fields: [exerciseId], references: [id])
+}
+
+model Favorites {
+  id Int @id @default(autoincrement())
+  userId String @default("anonymous")
+  exerciseId Int 
+  @@map("favorites")
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
+  @@index([userId])
+  @@index([exerciseId])
+  @@unique([userId, exerciseId])
+}
+
+model Routines {
+  id Int @id @default(autoincrement())
+  routineName String
+  selectedDays Int
+  cantRoutines Int
+  @@map("routines")
 }
