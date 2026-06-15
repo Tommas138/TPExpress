@@ -5,6 +5,35 @@ async function getAllExercises(req, res) {
   try {
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
+    const lang = req.query.lang; // opcional: ?lang=en
+
+    if (lang) {
+      const allowed = ['en', 'es'];
+      if (!allowed.includes(lang)) {
+        return res.status(400).json({ message: 'Idioma no soportado. Usa "en" o "es".' });
+      }
+
+      const exercises = await exercisesService.findAllWithLanguage(lang, limit, page);
+
+      // Normalizar respuesta: mezclar campos base con la traducción (si existe)
+      const mapped = exercises.map((ex) => {
+        const t = ex.translations && ex.translations[0] ? ex.translations[0] : null;
+        return {
+          id: ex.id,
+          difficulty: ex.difficulty,
+          video: ex.video,
+          image: ex.image,
+          targetIntensity: ex.targetIntensity,
+          name: t ? t.name : null,
+          muscleGroup: t ? t.muscleGroup : null,
+          equipment: t ? t.equipment : null,
+          breathing: t ? t.breathing : null,
+          technique: t ? t.technique : null,
+        };
+      });
+
+      return res.status(200).json(mapped);
+    }
 
     const exercises = await exercisesService.findAll(limit, page);
     return res.status(200).json(exercises);
@@ -38,6 +67,40 @@ async function getExercisesByLanguage(req, res) {
 // GET /api/exercises/:id
 async function getExerciseById(req, res) {
   try {
+    const lang = req.query.lang ?? null; // ?lang=en
+
+    if (lang) {
+      const allowed = ['en', 'es'];
+      if (!allowed.includes(lang)) {
+        return res.status(400).json({ message: 'Idioma no soportado. Usa "en" o "es".' });
+      }
+
+      const exercise = await exercisesService.findByIdWithLanguage(req.params.id, lang);
+      if (!exercise) {
+        return res.status(404).json({ message: 'Ejercicio no encontrado.' });
+      }
+
+      const t = exercise.translations && exercise.translations[0] ? exercise.translations[0] : null;
+      if (!t) {
+        return res.status(404).json({ message: `Traducción no encontrada para el idioma '${lang}'` });
+      }
+
+      const mapped = {
+        id: exercise.id,
+        difficulty: exercise.difficulty,
+        video: exercise.video,
+        image: exercise.image,
+        targetIntensity: exercise.targetIntensity,
+        name: t.name,
+        muscleGroup: t.muscleGroup,
+        equipment: t.equipment,
+        breathing: t.breathing,
+        technique: t.technique,
+      };
+
+      return res.status(200).json(mapped);
+    }
+
     const exercise = await exercisesService.findById(req.params.id);
 
     if (!exercise) {

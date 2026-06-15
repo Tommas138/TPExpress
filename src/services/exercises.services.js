@@ -9,6 +9,20 @@ async function findAll(limit = 10, page = 1) {
   });
 }
 
+// Busca ejercicios e incluye la traducción para un idioma dado
+async function findAllWithLanguage(lang, limit = 10, page = 1) {
+  const skip = (page - 1) * limit;
+  return prisma.exercise.findMany({
+    take: limit,
+    skip: skip,
+    include: {
+      translations: {
+        where: { language: lang }
+      }
+    }
+  });
+}
+
 // NUEVO SERVICIO: Busca en exerciseTranslation según el idioma y pagina
 async function findByLanguage(lang, limit = 10, page = 1) {
   const skip = (page - 1) * limit;
@@ -24,6 +38,18 @@ async function findByLanguage(lang, limit = 10, page = 1) {
 async function findById(id) {
   return prisma.exercise.findUnique({
     where: { id: Number(id) }
+  });
+}
+
+// Busca un ejercicio específico e incluye la traducción para un idioma dado
+async function findByIdWithLanguage(id, lang = 'en') {
+  return prisma.exercise.findUnique({
+    where: { id: Number(id) },
+    include: {
+      translations: {
+        where: { language: lang }
+      }
+    }
   });
 }
 
@@ -74,7 +100,9 @@ async function remove(id) {
 module.exports = {
   findAll,
   findByLanguage, // Exportamos el nuevo servicio
+  findAllWithLanguage,
   findById,
+  findByIdWithLanguage,
   create,
   update,
   remove
