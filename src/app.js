@@ -10,10 +10,21 @@ const app = express();
 app.use(express.json());
 
 //Config cors
+// Allow multiple frontends via comma-separated FRONTEND_URL env var
+const frontendUrls = (process.env.FRONTEND_URL || 'http://localhost:5173')
+  .split(',')
+  .map(u => u.trim())
+  .filter(Boolean);
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: function (origin, callback) {
+        // Allow non-browser requests (like curl, server-to-server)
+        if (!origin) return callback(null, true);
+        if (frontendUrls.includes(origin)) return callback(null, true);
+        return callback(new Error('CORS policy: origin not allowed'));
+    },
     methods: ["PUT", "GET", "DELETE", "POST"],
-    allowedHeaders: ["Content-Type" , "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use("/api/exercises", exercisesRouter);
