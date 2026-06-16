@@ -637,6 +637,7 @@ const exercises = [
 
 async function main() {
   console.log('🌱 Limpiando ejercicios viejos si existen...');
+  await prisma.favorites.deleteMany();
   await prisma.exerciseTranslation.deleteMany();
   await prisma.exercise.deleteMany();
 

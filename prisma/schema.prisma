@@ -19,6 +19,8 @@ model Exercise {
   @@map("exercise")
   translations ExerciseTranslation []
   favorite Favorites []
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ExerciseTranslation {
