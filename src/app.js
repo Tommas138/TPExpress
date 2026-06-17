@@ -44,5 +44,13 @@ app.get("/api/health", (req, res) => {
         uptime: process.uptime() // Muestra cuántos segundos lleva activo el servidor
   });
 });
+// Not-found handler: devolver JSON cuando la ruta no existe
+app.use((req, res, next) => {
+    res.status(404).json({ message: 'Endpoint no encontrado.' });
+});
+
+// Manejo centralizado de errores (debe ir después de todas las rutas)
+const errorHandler = require("./middlewares/errorHandler");
+app.use(errorHandler);
 // Exportamos la app configurada para que index.js la pueda levantar
 module.exports = app;
