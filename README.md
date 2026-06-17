@@ -1,12 +1,13 @@
-```markdown
-# Dunder Mifflin 🏢
-<img width="644" height="434" alt="image" src="https://github.com/user-attachments/assets/7cce5e7b-16d0-40ef-848d-8484ceba5df2" />
 
-### Integrantes del Grupo
-* **Dana Garcia** (FAI-3974) - *Developer*
-* **Herrera Jeremias** (FAI-3297) - *Developer*
-* **Mengon Muñoz Tomas** (FAI-3863) - *Project Manager*
+<h1> Dunder Mifflin 🏢 </h1>
+<div><img width="644" height="434" alt="image" src="https://github.com/user-attachments/assets/7cce5e7b-16d0-40ef-848d-8484ceba5df2" /> </div>
 
+<h3> Integrantes del Grupo </h3>
+<ul>
+<p> Dana Garcia (FAI-3974) - Developer </p>
+<p>Herrera Jeremias (FAI-3297) - Developer </p>
+<p> Mengon Muñoz Tomas (FAI-3863) - Project Manager </p>
+</ul>
 ---
 
 ## 🔗 Enlaces del Proyecto
@@ -33,7 +34,7 @@ Sigue estos pasos para configurar y ejecutar el servidor en tu entorno de desarr
 Asegúrate de tener instalado [Node.js](https://nodejs.org/) en tu sistema.
 
 
-### 2. Clonar el Repositorio e Instalar Dependencias
+### Clonar el Repositorio e Instalar Dependencias
 git clone https://github.com/Tommas138/TPExpress
 
 # Ingresar al directorio del proyecto
