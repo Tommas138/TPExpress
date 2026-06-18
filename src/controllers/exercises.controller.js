@@ -1,11 +1,11 @@
 const exercisesService = require('../services/exercises.services.js');
 
-// GET /api/exercises (Modificado para soportar paginación)
+// GET /api/exercises (Modificamos para soportar paginación)
 async function getAllExercises(req, res) {
   try {
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
-    const lang = req.query.lang; // opcional: ?lang=en
+    const lang = req.query.lang; 
 
     if (lang) {
       const allowed = ['en', 'es'];
@@ -15,7 +15,7 @@ async function getAllExercises(req, res) {
 
       const exercises = await exercisesService.findAllWithLanguage(lang, limit, page);
 
-      // Normalizar respuesta: mezclar campos base con la traducción (si existe)
+      // Normalizar respuesta: mezclamos campos base con la traducción (si existen)
       const mapped = exercises.map((ex) => {
         const t = ex.translations && ex.translations[0] ? ex.translations[0] : null;
         return {
@@ -46,11 +46,11 @@ async function getAllExercises(req, res) {
 // NUEVO CONTROLLER: GET /api/exercises/:lang
 async function getExercisesByLanguage(req, res) {
   try {
-    const { lang } = req.params; // Captura "en" o "es"
+    const { lang } = req.params; //esta linea captura "en" o "es"!
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
 
-    // Validar idioma permitido
+    // Validamos idioma permitido
     const allowed = ['en', 'es'];
     if (!allowed.includes(lang)) {
       return res.status(400).json({ message: 'Idioma no soportado. Usa "en" o "es".' });
@@ -67,7 +67,7 @@ async function getExercisesByLanguage(req, res) {
 // GET /api/exercises/:id
 async function getExerciseById(req, res) {
   try {
-    const lang = req.query.lang ?? null; // ?lang=en
+    const lang = req.query.lang ?? null; 
 
     if (lang) {
       const allowed = ['en', 'es'];
@@ -117,11 +117,17 @@ async function getExerciseById(req, res) {
 // POST /api/exercises
 async function createExercise(req, res) {
   try {
-    const { name, muscleGroup } = req.body;
+    const { muscleGroup, translations } = req.body;
+
     const details = [];
 
-    if (!name || name.trim() === '') {
-      details.push({ field: 'name', message: 'El nombre es obligatorio' });
+    if (!Array.isArray(translations) || translations.length === 0) {
+      details.push({ field: 'translations', message: 'Se requiere un arreglo de traducciones' });
+    } else {
+      const hasEs = translations.some((t) => t.language === 'es' && t.name && t.name.trim() !== '');
+      const hasEn = translations.some((t) => t.language === 'en' && t.name && t.name.trim() !== '');
+      if (!hasEs) details.push({ field: 'translations', message: 'Falta traducción en español (es) con nombre' });
+      if (!hasEn) details.push({ field: 'translations', message: 'Falta traducción en inglés (en) con nombre' });
     }
 
     if (details.length > 0) {
@@ -191,7 +197,7 @@ async function deleteExercise(req, res) {
 
 module.exports = {
   getAllExercises,
-  getExercisesByLanguage, // Exportamos la nueva función
+  getExercisesByLanguage, //En esta linea exportamos la nueva función
   getExerciseById,
   createExercise,
   updateExercise,

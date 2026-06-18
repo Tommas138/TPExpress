@@ -9,8 +9,7 @@ const app = express();
 
 app.use(express.json());
 
-//Config cors
-// Allow multiple frontends via comma-separated FRONTEND_URL env var
+//Configuramos cors para permitir solo el frontend 
 const frontendUrls = (process.env.FRONTEND_URL || 'http://localhost:5173')
   .split(',')
   .map(u => u.trim())
@@ -18,7 +17,6 @@ const frontendUrls = (process.env.FRONTEND_URL || 'http://localhost:5173')
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow non-browser requests (like curl, server-to-server)
         if (!origin) return callback(null, true);
         if (frontendUrls.includes(origin)) return callback(null, true);
         return callback(new Error('CORS policy: origin not allowed'));
@@ -41,15 +39,14 @@ app.get("/api/health", (req, res) => {
     res.status(200).json({
         status: "ok",
         timestamp: new Date().toISOString(),
-        uptime: process.uptime() // Muestra cuántos segundos lleva activo el servidor
+        uptime: process.uptime() //Esta linea nos muestra cuántos segundos lleva activo el servidor
   });
 });
-// Not-found handler: devolver JSON cuando la ruta no existe
+
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Endpoint no encontrado.' });
 });
 
-// Manejo centralizado de errores (debe ir después de todas las rutas)
 const errorHandler = require("./middlewares/errorHandler");
 app.use(errorHandler);
 // Exportamos la app configurada para que index.js la pueda levantar

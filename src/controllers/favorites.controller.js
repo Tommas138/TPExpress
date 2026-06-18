@@ -26,7 +26,7 @@ async function getFavorites(req, res) {
 
     const list = await favoritesService.findByUser(userId, lang, limit, page);
 
-    // Map to match exercises response shape (base fields + translation)
+    // mapeamos para incluir traducciones organizadas por idioma
     const mapped = list.map((f) => {
       const ex = f.exercise || null;
       let t = null;
@@ -45,7 +45,7 @@ async function getFavorites(req, res) {
         };
       }
 
-      // Build translations object keyed by language (e.g. { en: {...}, es: {...} })
+      // creamos el objeto de traducciones por idioma 
       const translationsByLang = {};
       if (ex && ex.translations) {
         ex.translations.forEach((tr) => {
@@ -93,7 +93,7 @@ async function addFavorite(req, res) {
       return res.status(400).json({ message: 'exerciseId es obligatorio.' });
     }
 
-    // verificar que el ejercicio exista
+    // verificamos que el ejercicio exista
     const exercise = await prisma.exercise.findUnique({ where: { id: Number(exerciseId) } });
     if (!exercise) {
       return res.status(404).json({ message: 'Ejercicio no encontrado.' });
@@ -104,7 +104,6 @@ async function addFavorite(req, res) {
       const created = await favoritesService.addFavorite(userToUse, exerciseId);
       return res.status(201).json(created);
     } catch (e) {
-      // posible violación de unique -> ya existe
       console.error(e);
       return res.status(409).json({ message: 'Favorito ya existe.' });
     }
@@ -162,7 +161,7 @@ async function getFavoriteById(req, res) {
 async function removeFavorite(req, res) {
   try {
     const userId = resolveUserId(req);
-    // If an id param is provided, delete by favorite id
+    // Si se proporciona el ID en la ruta, lo usamos para eliminar ese favorito específico
     if (req.params && req.params.id) {
       const favId = req.params.id;
       const result = await favoritesService.removeById(favId);
