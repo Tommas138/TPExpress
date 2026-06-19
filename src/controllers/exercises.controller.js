@@ -5,38 +5,45 @@ async function getAllExercises(req, res) {
   try {
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
-    const lang = req.query.lang; 
+    const lang = req.query.lang;
 
     if (lang) {
       const allowed = ['en', 'es'];
       if (!allowed.includes(lang)) {
         return res.status(400).json({ message: 'Idioma no soportado. Usa "en" o "es".' });
       }
-
-      const exercises = await exercisesService.findAllWithLanguage(lang, limit, page);
-
-      // Normalizar respuesta: mezclamos campos base con la traducción (si existen)
-      const mapped = exercises.map((ex) => {
-        const t = ex.translations && ex.translations[0] ? ex.translations[0] : null;
-        return {
-          id: ex.id,
-          difficulty: ex.difficulty,
-          video: ex.video,
-          image: ex.image,
-          targetIntensity: ex.targetIntensity,
-          name: t ? t.name : null,
-          muscleGroup: t ? t.muscleGroup : null,
-          equipment: t ? t.equipment : null,
-          breathing: t ? t.breathing : null,
-          technique: t ? t.technique : null,
-        };
-      });
-
-      return res.status(200).json(mapped);
     }
 
+    // Traemos todas las traducciones y luego las organizamos por idioma como en favorites
     const exercises = await exercisesService.findAll(limit, page);
-    return res.status(200).json(exercises);
+
+    const mapped = exercises.map((ex) => {
+      const translationsByLang = {};
+      if (ex.translations) {
+        ex.translations.forEach((tr) => {
+          translationsByLang[tr.language] = {
+            id: tr.id,
+            language: tr.language,
+            name: tr.name,
+            muscleGroup: tr.muscleGroup,
+            equipment: tr.equipment,
+            breathing: tr.breathing,
+            technique: tr.technique,
+          };
+        });
+      }
+
+      return {
+        id: ex.id,
+        difficulty: ex.difficulty,
+        video: ex.video,
+        image: ex.image,
+        targetIntensity: ex.targetIntensity,
+        translations: translationsByLang,
+      };
+    });
+
+    return res.status(200).json(mapped);
   } catch (error) {
     console.error('Error al obtener los ejercicios:', error);
     return res.status(500).json({ message: 'Error interno del servidor al traer los ejercicios.' });
