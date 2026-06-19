@@ -6,9 +6,6 @@ async function findAll(limit = 10, page = 1) {
   return prisma.exercise.findMany({
     take: limit,
     skip: skip,
-    include: {
-      translations: true
-    }
   });
 }
 
