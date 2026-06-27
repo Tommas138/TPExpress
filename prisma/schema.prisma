@@ -36,15 +36,29 @@ model ExerciseTranslation {
   exercise Exercise @relation(fields: [exerciseId], references: [id])
 }
 
+model User {
+  id        Int         @id @default(autoincrement())
+  name      String
+  email     String      @unique
+  password  String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  favorites Favorites[] // Relación uno a muchos con favoritos
+
+  @@map("users")
+}
+
 model Favorites {
-  id Int @id @default(autoincrement())
-  userId String @default("anonymous")
+  id         Int      @id @default(autoincrement())
+  userId     Int      // Cambiado a Int para relacionarse con la ID de User
   exerciseId Int 
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
   @@map("favorites")
-  exercise Exercise @relation(fields: [exerciseId], references: [id])
   @@index([userId])
   @@index([exerciseId])
-  @@unique([userId, exerciseId])
+  @@unique([userId, exerciseId]) // Evita duplicados para un mismo usuario
 }
 
 model Routines {

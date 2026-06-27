@@ -1,17 +1,9 @@
 const favoritesService = require('../services/favorites.services');
 const prisma = require('../config/prisma');
 
-function resolveUserId(req) {
-  if (!req) return null;
-  if (req.user && req.user.id) return req.user.id;
-  if (req.query && req.query.userId) return req.query.userId;
-  if (req.body && req.body.userId) return req.body.userId;
-  return null;
-}
-
 async function getFavorites(req, res) {
   try {
-    const userId = resolveUserId(req);
+    const userId = req.user.id;
     const limit = parseInt((req.query && req.query.limit) || 10) || 10;
     const page = parseInt((req.query && req.query.page) || 1) || 1;
     const lang = req.query && req.query.lang ? req.query.lang : null;
@@ -86,7 +78,7 @@ async function getFavorites(req, res) {
 
 async function addFavorite(req, res) {
   try {
-    const userId = resolveUserId(req);
+    const userId = req.user.id;
     const { exerciseId } = req.body;
 
     if (!exerciseId) {
@@ -160,7 +152,7 @@ async function getFavoriteById(req, res) {
 
 async function removeFavorite(req, res) {
   try {
-    const userId = resolveUserId(req);
+    const userId = req.user.id;
     // Si se proporciona el ID en la ruta, lo usamos para eliminar ese favorito específico
     if (req.params && req.params.id) {
       const favId = req.params.id;
