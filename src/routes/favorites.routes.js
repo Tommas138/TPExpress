@@ -2,8 +2,11 @@
 
 const { Router } = require('express');
 const favoritesController = require('../controllers/favorites.controller');
+const {protectRoute} = require("../middlewares/auth.middleware");
 
 const router = Router();
+
+router.use(protectRoute);
 
 router.get('/', favoritesController.getFavorites);
 

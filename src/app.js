@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config(); //Para cargar las variables .env}
 const exercisesRouter = require("./routes/exercises.routes");
 const favoritesRouter = require("./routes/favorites.routes");
+const authRoutes = require("./routes/auth.routes");
 
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(cors({
 
 app.use("/api/exercises", exercisesRouter);
 app.use("/api/favorites", favoritesRouter);
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
     res.status(200).json({
