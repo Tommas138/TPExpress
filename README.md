@@ -5,7 +5,7 @@
 <h3> Integrantes del Grupo </h3>
 <ul>
 <p> Dana Garcia (FAI-3974) - Developer </p>
-<p>Herrera Jeremias (FAI-3297) - Developer </p>
+<p> Herrera Jeremias (FAI-3297) - Developer </p>
 <p> Mengon Muñoz Tomas (FAI-3863) - Project Manager </p>
 </ul>
 ---
@@ -15,6 +15,15 @@
 * **Tablero Kanban:** (https://linear.app/pwa-dunder-mifflin/team/PWA/view/tp-express-b7d5057199d1)
 * **Despliegue Backend (Vercel):** [tp-express.vercel.app](https://tp-express.vercel.app/)
 * **Despliegue Frontend (Vercel):** [pwa-tp-2-k63n.vercel.app](https://pwa-tp-2-k63n.vercel.app/)
+
+---
+## 🔗 Librerias utilizadas
+* Prisma ORM
+* Json web Token (JWT)
+* Bcrypt
+* Nodejs
+* Express
+* PostgreSQL Neon
 
 ---
 
